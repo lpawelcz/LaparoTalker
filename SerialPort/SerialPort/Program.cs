@@ -10,16 +10,40 @@ namespace SerialPorts
 
         static SerialPort Port;
         static string portName;
+        static bool _continue;
+
         public static void Main()
         {
             Port = new SerialPort();
+            _continue = true;
+            string command;
 
             PrintPortNames();
             Init();
-
             OpenPort();
-            //          WĄTKI
-            Console.WriteLine("Coś się dzieje");
+
+            ResponseListener Listener = new ResponseListener(Port,ref _continue);
+            Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
+            ListenerThread.Start();
+
+            Console.WriteLine("Napisz 'q' by wyjsc");
+
+            while (_continue)
+            {
+                command = Console.ReadLine();
+
+                if (string.Equals(command, "q", StringComparison.OrdinalIgnoreCase))
+                {
+                    _continue = false;
+                }
+                else                                                    
+                {
+                    // TODO: wysyłanie komend tutaj
+                }
+            }
+
+
+            ListenerThread.Join();
             Thread.Sleep(1000);
             ClosePort();
             Console.ReadLine();
