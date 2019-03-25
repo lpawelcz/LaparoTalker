@@ -1,5 +1,4 @@
 ﻿
-
 //#define DEBUGin
 
 using System;
@@ -43,6 +42,7 @@ namespace SerialPorts
                 }
                 else
                 {
+                    Port.WriteLine(String.Format("{0}", command)); 
                     // TODO: wysyłanie komend tutaj
                 }
             }
@@ -82,7 +82,7 @@ namespace SerialPorts
                 Console.WriteLine("Status: {0}", ManObj["Status"].ToString());
                 Console.WriteLine("\n");
 #endif
-                if (ManObj["DeviceID"].ToString().Contains("PID_6001"));
+                if (ManObj["DeviceID"].ToString().Contains("PID_6001"))
                 {
                     string[] substrings = ManObj["Name"].ToString().Split('(');
                     substrings = substrings[1].Split(')');
