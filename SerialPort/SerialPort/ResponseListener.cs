@@ -1,4 +1,8 @@
-﻿using System;
+﻿
+
+//#define DEBUGin
+
+using System;
 using System.IO.Ports;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +33,9 @@ namespace SerialPorts
                     string Response = Port.ReadLine();
 //                  string Response = Console.ReadLine();
                     Logger.LogWrite(Response);
+#if DEBUGin
                     Console.WriteLine(Response);
+#endif
                 }
                 catch (TimeoutException) { }
             }

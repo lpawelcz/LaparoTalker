@@ -1,4 +1,9 @@
-﻿using System;
+﻿
+
+//#define DEBUGin
+
+using System;
+using System.Management;
 using System.IO.Ports;
 using System.Threading;
 
@@ -50,13 +55,7 @@ namespace SerialPorts
         }
 
         public static void Init()
-        {
-            Console.WriteLine("Podaj nazwe wybranego portu, (Domyslnie: {0}):", "COM1");
-
-            portName = Console.ReadLine();
-            if (portName == "" || !(portName.ToLower()).StartsWith("com"))
-                portName = "COM1";           
-
+        {         
             Port.PortName = portName;
             Port.BaudRate = 9600;
             Port.Parity = Parity.None;
@@ -69,14 +68,32 @@ namespace SerialPorts
 
         public static void PrintPortNames()
         {
-            string[] ports = SerialPort.GetPortNames();
 
-            Console.WriteLine("Znaleziono następujące porty szeregowe:");
-            int i = 1;
-            foreach (string port in ports)
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2","SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
+            foreach (ManagementObject ManObj in searcher.Get())
             {
-                Console.WriteLine("{0}. {1}", i, port);
+#if DEBUGin
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("DeviceID: {0}", ManObj["DeviceID"].ToString());
+                Console.WriteLine("PNPDeviceID: {0}", ManObj["PNPDeviceID"].ToString());
+                Console.WriteLine("Name: {0}", ManObj["Name"].ToString());
+                Console.WriteLine("Caption: {0}", ManObj["Caption"].ToString());
+                Console.WriteLine("Description: {0}", ManObj["Description"].ToString());
+                Console.WriteLine("Status: {0}", ManObj["Status"].ToString());
+                Console.WriteLine("\n");
+#endif
+                if (ManObj["DeviceID"].ToString().Contains("PID_6001"));
+                {
+                    string[] substrings = ManObj["Name"].ToString().Split('(');
+                    substrings = substrings[1].Split(')');
+#if DEBUGin
+                    Console.WriteLine("Port do podlaczenia: {0}", substrings[0]);
+#endif
+                    portName = substrings[0];
+                }
+                    
             }
+
         }
 
         public static void OpenPort()
