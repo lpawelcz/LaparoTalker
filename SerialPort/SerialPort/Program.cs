@@ -36,7 +36,7 @@ namespace SerialPorts
                 {
                     _continue = false;
                 }
-                else                                                    
+                else
                 {
                     // TODO: wysyłanie komend tutaj
                 }

@@ -11,9 +11,11 @@ namespace SerialPorts
     class ResponseListener
     {
         static SerialPort Port;
+        static Logger Logger;
         bool _continue;
         public ResponseListener(SerialPort port, ref bool cont)
         {
+            Logger = new Logger();
             Port = port;
             _continue = cont;
         }
@@ -24,8 +26,10 @@ namespace SerialPorts
             {
                 try
                 {
-                    string message = Port.ReadLine();
-                    Console.WriteLine(message);
+                    string Response = Port.ReadLine();
+//                  string Response = Console.ReadLine();
+                    Logger.LogWrite(Response);
+                    Console.WriteLine(Response);
                 }
                 catch (TimeoutException) { }
             }
