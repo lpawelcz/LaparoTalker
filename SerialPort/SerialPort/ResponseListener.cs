@@ -1,5 +1,4 @@
 ﻿
-
 //#define DEBUGin
 
 using System;
@@ -16,17 +15,17 @@ namespace SerialPorts
     {
         static SerialPort Port;
         static Logger Logger;
-        bool _continue;
-        public ResponseListener(SerialPort port, ref bool cont)
+        static FlagCarrier continuing;
+        public ResponseListener(SerialPort port, ref FlagCarrier cont)
         {
             Logger = new Logger();
             Port = port;
-            _continue = cont;
+            continuing = cont;
         }
 
         public void Run()
         {
-            while (_continue)
+            while (continuing.bContinue)
             {
                 try
                 {
@@ -34,7 +33,7 @@ namespace SerialPorts
 //                  string Response = Console.ReadLine();
                     Logger.LogWrite(Response);
 #if DEBUGin
-                    Console.WriteLine(Response);
+                    Console.WriteLine("<{0}", Response);
 #endif
                 }
                 catch (TimeoutException) { }
@@ -42,4 +41,12 @@ namespace SerialPorts
         }
 
     }
+
+    public class FlagCarrier
+
+    {
+        public bool bContinue;
+
+    }
+
 }

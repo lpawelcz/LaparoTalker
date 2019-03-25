@@ -14,12 +14,12 @@ namespace SerialPorts
 
         static SerialPort Port;
         static string portName;
-        static bool _continue;
+        static FlagCarrier _continue = new FlagCarrier();
 
         public static void Main()
         {
             Port = new SerialPort();
-            _continue = true;
+            _continue.bContinue = true;
             string command;
 
             PrintPortNames();
@@ -32,18 +32,20 @@ namespace SerialPorts
 
             Console.WriteLine("Napisz 'q' by wyjsc");
 
-            while (_continue)
+            while (_continue.bContinue)
             {
-                command = Console.ReadLine();
+                Thread.Sleep(50);
+                Console.Write(">");
+               command = Console.ReadLine();
 
                 if (string.Equals(command, "q", StringComparison.OrdinalIgnoreCase))
                 {
-                    _continue = false;
+                    _continue.bContinue = false;
                 }
                 else
                 {
                     Port.WriteLine(String.Format("{0}", command)); 
-                    // TODO: wysyłanie komend tutaj
+                    // TODO: wysyłanie komend tutaj, zastosowanie wiedzy z doca
                 }
             }
 
@@ -51,7 +53,6 @@ namespace SerialPorts
             ListenerThread.Join();
             Thread.Sleep(1000);
             ClosePort();
-            Console.ReadLine();
         }
 
         public static void Init()
