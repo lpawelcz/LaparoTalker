@@ -6,7 +6,6 @@ using System.Management;
 using System.IO.Ports;
 using System.Threading;
 
-
 namespace SerialPorts
 {
     class Program
@@ -17,18 +16,15 @@ namespace SerialPorts
         static string CMP_s = ByteToHexStringConverter.ByteToHexBitFiddle(CMS);
 
 
-        static SerialPort Port;
         static string portName;
+        static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
+        static int order = 0;
+        static string command = null;
 
         public static void Main()
         {
-            Port = new SerialPort();
-            _continue.bContinue = true;
-            int order = 0;
-            string command = null;
-
-            PrintPortNames();
+            FindPortName();
             Init();
             OpenPort();
 
@@ -41,10 +37,9 @@ namespace SerialPorts
             PingerThread.Start();
 
             Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
-
             while (_continue.bContinue)
             {
-                //              Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
+//              Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
                 Thread.Sleep(50);
                 do
                 {
@@ -68,7 +63,7 @@ namespace SerialPorts
 
                 }
                 Port.WriteLine(command);
-                //              Console.Clear();
+//              Console.Clear();
             }
 
 
@@ -89,7 +84,7 @@ namespace SerialPorts
             Port.WriteTimeout = 500;
         }
 
-        public static void PrintPortNames()
+        public static void FindPortName()
         {
 
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
@@ -133,7 +128,7 @@ namespace SerialPorts
 
     }
 }
-class ByteToHexStringConverter
+class ByteToHexStringConverter                                      // https://stackoverflow.com/a/14333437
 {
         static public string ByteToHexBitFiddle(byte[] bytes)
         {

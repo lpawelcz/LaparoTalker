@@ -3,11 +3,6 @@
 
 using System;
 using System.IO.Ports;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
 
 namespace SerialPorts
 {
@@ -43,8 +38,11 @@ namespace SerialPorts
     }
 
     public class FlagCarrier
-
     {
+        public FlagCarrier()
+        {
+            bContinue = true;
+        }
         public bool bContinue;
 
     }
