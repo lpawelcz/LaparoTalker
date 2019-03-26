@@ -11,6 +11,9 @@ namespace SerialPorts
 {
     class Program
     {
+        static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0x0, 0xE0 };
+        static byte[] CMS = { 0x43, 0x4D, 0x53, 0x0, 0x0, 0x0, 0x0, 0xE3 };
+
 
         static SerialPort Port;
         static string portName;
@@ -20,33 +23,45 @@ namespace SerialPorts
         {
             Port = new SerialPort();
             _continue.bContinue = true;
-            string command;
+            int order = 0;
+            string command = null;
 
             PrintPortNames();
             Init();
             OpenPort();
 
-            ResponseListener Listener = new ResponseListener(Port,ref _continue);
+            ResponseListener Listener = new ResponseListener(Port, ref _continue);
             Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
             ListenerThread.Start();
-
-            Console.WriteLine("Napisz 'q' by wyjsc");
+            Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
 
             while (_continue.bContinue)
             {
+                //              Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
                 Thread.Sleep(50);
-                Console.Write(">");
-               command = Console.ReadLine();
+                do
+                {
+                    Console.Write(">");
+                    int.TryParse(Console.ReadLine(), out order);
+                } while (order > 3 || order < 1);
 
-                if (string.Equals(command, "q", StringComparison.OrdinalIgnoreCase))
+                switch (order)
                 {
-                    _continue.bContinue = false;
+                    case 1:
+                        command = ByteToHexBitFiddle(CMP);
+                        break;
+                    case 2:
+                        command = ByteToHexBitFiddle(CMS);
+                        break;
+                    case 3:
+                        _continue.bContinue = false;
+                        break;
+                    default:
+                        break;
+
                 }
-                else
-                {
-                    Port.WriteLine(String.Format("{0}", command)); 
-                    // TODO: wysyłanie komend tutaj, zastosowanie wiedzy z doca
-                }
+                Port.WriteLine(command);
+                //              Console.Clear();
             }
 
 
@@ -56,7 +71,7 @@ namespace SerialPorts
         }
 
         public static void Init()
-        {         
+        {
             Port.PortName = portName;
             Port.BaudRate = 9600;
             Port.Parity = Parity.None;
@@ -70,7 +85,7 @@ namespace SerialPorts
         public static void PrintPortNames()
         {
 
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2","SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
             foreach (ManagementObject ManObj in searcher.Get())
             {
 #if DEBUGin
@@ -92,7 +107,7 @@ namespace SerialPorts
 #endif
                     portName = substrings[0];
                 }
-                    
+
             }
 
         }
@@ -107,6 +122,21 @@ namespace SerialPorts
         {
             Port.Close();
             Console.WriteLine("port {0} zostal zamkniety", portName);
+        }
+
+
+        static string ByteToHexBitFiddle(byte[] bytes)
+        {
+            char[] c = new char[bytes.Length * 2];
+            int b;
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                b = bytes[i] >> 4;
+                c[i * 2] = (char)(55 + b + (((b - 10) >> 31) & -7));
+                b = bytes[i] & 0xF;
+                c[i * 2 + 1] = (char)(55 + b + (((b - 10) >> 31) & -7));
+            }
+            return new string(c);
         }
     }
 }
