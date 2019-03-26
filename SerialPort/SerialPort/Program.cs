@@ -13,6 +13,8 @@ namespace SerialPorts
     {
         static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0x0, 0xE0 };
         static byte[] CMS = { 0x43, 0x4D, 0x53, 0x0, 0x0, 0x0, 0x0, 0xE3 };
+        static string CMP_p = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
+        static string CMP_s = ByteToHexStringConverter.ByteToHexBitFiddle(CMS);
 
 
         static SerialPort Port;
@@ -33,6 +35,11 @@ namespace SerialPorts
             ResponseListener Listener = new ResponseListener(Port, ref _continue);
             Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
             ListenerThread.Start();
+
+            Pinger Pinger = new Pinger(Port, ref _continue);
+            Thread PingerThread = new Thread(new ThreadStart(Pinger.Run));
+            PingerThread.Start();
+
             Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
 
             while (_continue.bContinue)
@@ -48,10 +55,10 @@ namespace SerialPorts
                 switch (order)
                 {
                     case 1:
-                        command = ByteToHexBitFiddle(CMP);
+                        command = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
                         break;
                     case 2:
-                        command = ByteToHexBitFiddle(CMS);
+                        command = ByteToHexStringConverter.ByteToHexBitFiddle(CMS);
                         break;
                     case 3:
                         _continue.bContinue = false;
@@ -124,8 +131,11 @@ namespace SerialPorts
             Console.WriteLine("port {0} zostal zamkniety", portName);
         }
 
-
-        static string ByteToHexBitFiddle(byte[] bytes)
+    }
+}
+class ByteToHexStringConverter
+{
+        static public string ByteToHexBitFiddle(byte[] bytes)
         {
             char[] c = new char[bytes.Length * 2];
             int b;
@@ -138,5 +148,4 @@ namespace SerialPorts
             }
             return new string(c);
         }
-    }
 }

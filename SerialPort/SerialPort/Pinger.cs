@@ -3,22 +3,21 @@
 
 using System;
 using System.IO.Ports;
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
-using System.Threading;
 
 namespace SerialPorts
 {
-    class ResponseListener
+    class Pinger
     {
-        static Logger Logger;
+        static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0x0, 0xE0 };
+        static string CMP_s = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
         static SerialPort Port;
         static FlagCarrier continuing;
-        public ResponseListener(SerialPort port, ref FlagCarrier cont)
+        public Pinger(SerialPort port, ref FlagCarrier cont)
         {
-            Logger = new Logger();
             Port = port;
             continuing = cont;
         }
@@ -29,11 +28,10 @@ namespace SerialPorts
             {
                 try
                 {
-                    string Response = Port.ReadLine();
-//                  string Response = Console.ReadLine();
-                    Logger.LogWrite(Response);
+                    Port.WriteLine(CMP_s);
+                    Thread.Sleep(750);
 #if DEBUGin
-                    Console.WriteLine("<{0}", Response);
+                    Console.WriteLine("<{0}", CMP_s);
 #endif
                 }
                 catch (TimeoutException) { }
@@ -41,12 +39,4 @@ namespace SerialPorts
         }
 
     }
-
-    public class FlagCarrier
-
-    {
-        public bool bContinue;
-
-    }
-
 }
