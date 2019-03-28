@@ -9,7 +9,7 @@ namespace LaparoTalker
 {
     class Pinger
     {
-        static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0x0, 0xE0 };
+        static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0xE0, 0x00 };
         static string CMP_s = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
         static SerialPort Port;
         static FlagCarrier continuing;
@@ -25,7 +25,7 @@ namespace LaparoTalker
             {
                 try
                 {
-                    Port.WriteLine(CMP_s);
+                    Port.Write(CMP,0,CMP.Length);
                     Thread.Sleep(750);
 #if DEBUGin
                     Console.WriteLine("<{0}", CMP_s);

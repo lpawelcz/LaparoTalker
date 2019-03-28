@@ -10,8 +10,8 @@ namespace LaparoTalker
 {
     class Program
     {
-        static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0x0, 0xE0 };
-        static byte[] CMS = { 0x43, 0x4D, 0x53, 0x0, 0x0, 0x0, 0x0, 0xE3 };
+        static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0xE0, 0x0 };
+        static byte[] CMS = { 0x43, 0x4D, 0x53, 0x0, 0x0, 0x0, 0xE3, 0x0 };
         static string CMP_p = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
         static string CMP_s = ByteToHexStringConverter.ByteToHexBitFiddle(CMS);
 
@@ -20,7 +20,7 @@ namespace LaparoTalker
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
         static int order = 0;
-        static string command = null;
+        static byte[] command = null;
 
         public static void Main()
         {
@@ -28,13 +28,14 @@ namespace LaparoTalker
             Init();
             OpenPort();
 
+            Pinger Pinger = new Pinger(Port, ref _continue);
+            Thread PingerThread = new Thread(new ThreadStart(Pinger.Run));
+            PingerThread.Start();
+
             ResponseListener Listener = new ResponseListener(Port, ref _continue);
             Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
             ListenerThread.Start();
 
-            Pinger Pinger = new Pinger(Port, ref _continue);
-            Thread PingerThread = new Thread(new ThreadStart(Pinger.Run));
-            PingerThread.Start();
 
             Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
             while (_continue.bContinue)
@@ -50,10 +51,10 @@ namespace LaparoTalker
                 switch (order)
                 {
                     case 1:
-                        command = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
+                        command = CMP;
                         break;
                     case 2:
-                        command = ByteToHexStringConverter.ByteToHexBitFiddle(CMS);
+                        command = CMS;
                         break;
                     case 3:
                         _continue.bContinue = false;
@@ -62,12 +63,13 @@ namespace LaparoTalker
                         break;
 
                 }
-                Port.WriteLine(command);
+                Port.Write(command,0,command.Length);
 //              Console.Clear();
             }
 
 
-            ListenerThread.Join();
+ //           ListenerThread.Join();
+            PingerThread.Join();
             Thread.Sleep(1000);
             ClosePort();
         }
@@ -100,7 +102,7 @@ namespace LaparoTalker
                 Console.WriteLine("Status: {0}", ManObj["Status"].ToString());
                 Console.WriteLine("\n");
 #endif
-                if (ManObj["DeviceID"].ToString().Contains("PID_6001"))
+                if (ManObj["DeviceID"].ToString().Contains("PID_5740"))
                 {
                     string[] substrings = ManObj["Name"].ToString().Split('(');
                     substrings = substrings[1].Split(')');
