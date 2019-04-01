@@ -10,7 +10,6 @@ namespace LaparoTalker
     class Pinger
     {
         static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0xE0, 0x00 };
-        static string CMP_s = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
         static SerialPort Port;
         static FlagCarrier continuing;
         public Pinger(SerialPort port, ref FlagCarrier cont)

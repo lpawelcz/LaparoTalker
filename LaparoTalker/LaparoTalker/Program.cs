@@ -12,8 +12,6 @@ namespace LaparoTalker
     {
         static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0xE0, 0x0 };
         static byte[] CMS = { 0x43, 0x4D, 0x53, 0x0, 0x0, 0x0, 0xE3, 0x0 };
-        static string CMP_p = ByteToHexStringConverter.ByteToHexBitFiddle(CMP);
-        static string CMP_s = ByteToHexStringConverter.ByteToHexBitFiddle(CMS);
 
 
         static string portName;
@@ -129,20 +127,4 @@ namespace LaparoTalker
         }
 
     }
-}
-class ByteToHexStringConverter                                      // https://stackoverflow.com/a/14333437
-{
-        static public string ByteToHexBitFiddle(byte[] bytes)
-        {
-            char[] c = new char[bytes.Length * 2];
-            int b;
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                b = bytes[i] >> 4;
-                c[i * 2] = (char)(55 + b + (((b - 10) >> 31) & -7));
-                b = bytes[i] & 0xF;
-                c[i * 2 + 1] = (char)(55 + b + (((b - 10) >> 31) & -7));
-            }
-            return new string(c);
-        }
 }
