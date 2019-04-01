@@ -66,7 +66,7 @@ namespace LaparoTalker
             }
 
 
- //           ListenerThread.Join();
+            ListenerThread.Join();
             PingerThread.Join();
             Thread.Sleep(1000);
             ClosePort();
