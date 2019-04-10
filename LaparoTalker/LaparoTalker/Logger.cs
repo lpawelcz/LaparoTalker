@@ -1,5 +1,4 @@
-﻿
-//#define EXTENDED_LOG
+﻿//#define EXTENDED_LOG
 
 using System;
 using System.IO;

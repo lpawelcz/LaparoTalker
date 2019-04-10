@@ -1,5 +1,4 @@
-﻿
-//#define DEBUGin
+﻿//#define DEBUGin
 
 using System;
 using System.IO.Ports;
@@ -9,13 +8,14 @@ namespace LaparoTalker
 {
     class Pinger
     {
-        static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0xE0, 0x00 };
+        static byte[] CMP = new byte[8];
         static SerialPort Port;
         static FlagCarrier continuing;
-        public Pinger(SerialPort port, ref FlagCarrier cont)
+        public Pinger(SerialPort port, ref FlagCarrier cont, byte[] CM)
         {
             Port = port;
             continuing = cont;
+            CMP = CM;
         }
 
         public void Run()
@@ -35,4 +35,15 @@ namespace LaparoTalker
         }
 
     }
+
+    public class FlagCarrier
+    {
+        public FlagCarrier()
+        {
+            bContinue = true;
+        }
+        public bool bContinue;
+
+    }
+
 }

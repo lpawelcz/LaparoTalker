@@ -13,33 +13,37 @@ namespace LaparoTalker
         static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0xE0, 0x0 };
         static byte[] CMS = { 0x43, 0x4D, 0x53, 0x0, 0x0, 0x0, 0xE3, 0x0 };
 
-
-        static string portName;
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
         static Logger Logger = new Logger();
-        static int order = 0;
-        static byte[] command = null;
+
+        static string portName="nazwa";
+        static int order = 0;                                                       // wybór w menu
 
         public static void Main()
         {
-            FindPortName();
-            Init();
-            OpenPort();
+            if (FindPortName() == -1)                                               // Wyszukanie odpowiedniego portu
+            {
+                Console.WriteLine("Blad! Nie znaleziono urzadzenia!");
+                return;
+            }
+            Init();                                                                 // ustalenie parametrów połączenia
+            OpenPort();                                                             // Otwarcie portu
 
-            Pinger Pinger = new Pinger(Port, ref _continue);
+            Pinger Pinger = new Pinger(Port, ref _continue, CMP);                   // Wątek pingujący
             Thread PingerThread = new Thread(new ThreadStart(Pinger.Run));
             PingerThread.Start();
 
- //           ResponseListener Listener = new ResponseListener(Port, ref _continue);
-//            Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
- //           ListenerThread.Start();
-            Port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);
+//          ResponseListener Listener = new ResponseListener(Port, ref _continue);
+//          Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
+//          ListenerThread.Start();
 
-            Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");
-            while (_continue.bContinue)
+            Port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);         // zarejestrowanie obsługi zdarzenia, zdarzenie pojawia się gdy bufor osiągnie rozmiar określony w  Port.ReceivedBytesThreshold
+
+            Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");              // Menu
+            while (_continue.bContinue)                                                         // do momentu wciśnięcia '3'
             {
-                Thread.Sleep(50);
+//                Thread.Sleep(50);
                 do
                 {
                     Console.Write(">");
@@ -49,10 +53,10 @@ namespace LaparoTalker
                 switch (order)
                 {
                     case 1:
-                        command = CMP;
+                        Port.Write(CMP, 0,CMP.Length);                       // wyślij wybraną komendę
                         break;
                     case 2:
-                        command = CMS;
+                        Port.Write(CMS, 0, CMS.Length);                     // wyślij wybraną komendę
                         break;
                     case 3:
                         _continue.bContinue = false;
@@ -61,12 +65,11 @@ namespace LaparoTalker
                         break;
 
                 }
-                Port.Write(command,0,command.Length);
 //              Console.Clear();
             }
 
 
- //           ListenerThread.Join();
+//          ListenerThread.Join();
             PingerThread.Join();
             Thread.Sleep(1000);
             ClosePort();
@@ -82,10 +85,10 @@ namespace LaparoTalker
             Port.Handshake = Handshake.None;
             Port.ReadTimeout = 500;
             Port.WriteTimeout = 500;
-            Port.ReceivedBytesThreshold = 50;               // WAŻNE: liczba bajtów w buforze odczytu, która uaktywnia zapis do pliku
+            Port.ReceivedBytesThreshold = 200;               // WAŻNE: liczba bajtów w buforze odczytu, która uaktywnia zapis do pliku
         }
 
-        public static void FindPortName()
+        public static int FindPortName()
         {
 
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
@@ -101,9 +104,9 @@ namespace LaparoTalker
                 Console.WriteLine("Status: {0}", ManObj["Status"].ToString());
                 Console.WriteLine("\n");
 #endif
-                if (ManObj["DeviceID"].ToString().Contains("PID_6001"))                     //Laparo: PID_5740      myEchoDevice: PID_6001
+                if (ManObj["DeviceID"].ToString().Contains("PID_5740"))                     //Laparo: PID_5740      myEchoDevice: PID_6001
                 {
-                    string[] substrings = ManObj["Name"].ToString().Split('(');
+                    string[] substrings = ManObj["Name"].ToString().Split('(');             // Wyłuskanie nazwy portu w formacie "COM<<numer>>"
                     substrings = substrings[1].Split(')');
 #if DEBUGin
                     Console.WriteLine("Port do podlaczenia: {0}", substrings[0]);
@@ -112,6 +115,10 @@ namespace LaparoTalker
                 }
 
             }
+            if (portName == "nazwa")
+                return -1;
+            else
+                return 0;
 
         }
 
