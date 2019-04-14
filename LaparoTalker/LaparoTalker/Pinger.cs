@@ -36,14 +36,5 @@ namespace LaparoTalker
 
     }
 
-    public class FlagCarrier
-    {
-        public FlagCarrier()
-        {
-            bContinue = true;
-        }
-        public bool bContinue;
-
-    }
-
+   
 }

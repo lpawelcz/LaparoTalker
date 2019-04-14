@@ -5,6 +5,8 @@ using System;
 using System.Management;
 using System.IO.Ports;
 using System.Threading;
+using System.IO;
+using System.Reflection;
 
 namespace LaparoTalker
 {
@@ -15,64 +17,85 @@ namespace LaparoTalker
 
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
-        static Logger Logger = new Logger();
+        static BytesCarrier byteCarrier = new BytesCarrier();
+        static Logger RawLogger = new Logger("RawLogg");
 
-        static string portName="nazwa";
+
+        static string filepath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\prawy_insert_krotki.txt";
+        static string portName = "nazwa";
         static int order = 0;                                                       // wybór w menu
 
         public static void Main()
         {
-            if (FindPortName() == -1)                                               // Wyszukanie odpowiedniego portu
+            int ProgramMode = 0;
+            Console.WriteLine("wybierz tryb: 1 - bez urzadzenia     2 - z urzadzeniem");
+            int.TryParse(Console.ReadLine(), out ProgramMode);
+
+            if (ProgramMode == 1)
             {
-                Console.WriteLine("Blad! Nie znaleziono urzadzenia!");
-                return;
+                FileReader Reader = new FileReader(filepath, ref _continue, ref byteCarrier);
+                Thread ReaderThread = new Thread(new ThreadStart(Reader.Run));
+                ReaderThread.Start();
+
+                ReaderThread.Join();
+                System.Console.ReadKey();
             }
-            Init();                                                                 // ustalenie parametrów połączenia
-            OpenPort();                                                             // Otwarcie portu
-
-            Pinger Pinger = new Pinger(Port, ref _continue, CMP);                   // Wątek pingujący
-            Thread PingerThread = new Thread(new ThreadStart(Pinger.Run));
-            PingerThread.Start();
-
-//          ResponseListener Listener = new ResponseListener(Port, ref _continue);
-//          Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
-//          ListenerThread.Start();
-
-            Port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);         // zarejestrowanie obsługi zdarzenia, zdarzenie pojawia się gdy bufor osiągnie rozmiar określony w  Port.ReceivedBytesThreshold
-
-            Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");              // Menu
-            while (_continue.bContinue)                                                         // do momentu wciśnięcia '3'
+            else
             {
-//                Thread.Sleep(50);
-                do
+                if (FindPortName() == -1)                                               // Wyszukanie odpowiedniego portu
                 {
-                    Console.Write(">");
-                    int.TryParse(Console.ReadLine(), out order);
-                } while (order > 3 || order < 1);
-
-                switch (order)
-                {
-                    case 1:
-                        Port.Write(CMP, 0,CMP.Length);                       // wyślij wybraną komendę
-                        break;
-                    case 2:
-                        Port.Write(CMS, 0, CMS.Length);                     // wyślij wybraną komendę
-                        break;
-                    case 3:
-                        _continue.bContinue = false;
-                        break;
-                    default:
-                        break;
-
+                    Console.WriteLine("Blad! Nie znaleziono urzadzenia!");
+                    return;
                 }
-//              Console.Clear();
+                Init();                                                                 // ustalenie parametrów połączenia
+                OpenPort();                                                             // Otwarcie portu
+
+                Pinger Pinger = new Pinger(Port, ref _continue, CMP);                   // Wątek pingujący
+                Thread PingerThread = new Thread(new ThreadStart(Pinger.Run));
+                PingerThread.Start();
+
+                //          ResponseListener Listener = new ResponseListener(Port, ref _continue);
+                //          Thread ListenerThread = new Thread(new ThreadStart(Listener.Run));
+                //          ListenerThread.Start();
+
+                Port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);         // zarejestrowanie obsługi zdarzenia, zdarzenie pojawia się gdy bufor osiągnie rozmiar określony w  Port.ReceivedBytesThreshold
+
+                Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");              // Menu
+                while (_continue.bContinue)                                                         // do momentu wciśnięcia '3'
+                {
+                    //                Thread.Sleep(50);
+                    do
+                    {
+                        Console.Write(">");
+                        int.TryParse(Console.ReadLine(), out order);
+                    } while (order > 3 || order < 1);
+
+                    switch (order)
+                    {
+                        case 1:
+                            Port.Write(CMP, 0, CMP.Length);                       // wyślij wybraną komendę
+                            break;
+                        case 2:
+                            Port.Write(CMS, 0, CMS.Length);                     // wyślij wybraną komendę
+                            break;
+                        case 3:
+                            _continue.bContinue = false;
+                            break;
+                        default:
+                            break;
+
+                    }
+                    //              Console.Clear();
+                }
+
+
+                //          ListenerThread.Join();
+                PingerThread.Join();
+                Thread.Sleep(1000);
+                ClosePort();
             }
 
 
-//          ListenerThread.Join();
-            PingerThread.Join();
-            Thread.Sleep(1000);
-            ClosePort();
         }
 
         public static void Init()
@@ -134,16 +157,22 @@ namespace LaparoTalker
             Console.WriteLine("port {0} zostal zamkniety", portName);
         }
 
+
+
         public static void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            int dataLength = Port.BytesToRead;
-            byte[] data = new byte[dataLength];
-            int nbrDataRead = Port.Read(data, 0, dataLength);
-            if (nbrDataRead == 0)                                                               // jeśli nie odczytano danych, nie rób nic
+ //           int dataLength = Port.BytesToRead;
+ //           byte[] data = new byte[dataLength];
+            int nbrDataRead = Port.Read(byteCarrier.bytes, 0, 200);
+            if (nbrDataRead == 0)                                                                       // jeśli nie odczytano danych, nie rób nic
                 return;
+            byteCarrier.ExtractData();
+            byteCarrier.flush();
 
-            string Response = System.Text.Encoding.UTF8.GetString(data, 0, data.Length);        // konwersja bajtów na string
-            Logger.LogWrite(Response);                                                          // Wysłanie danych do pliku
+            string RawLog = System.Text.Encoding.UTF8.GetString(byteCarrier.bytes, 0, 200);           // konwersja bajtów na string
+            string FloatsLog = byteCarrier.FloatFormat();
+            RawLogger.LogWrite(RawLog);                                                                  // Wysłanie danych do pliku
+
 #if DEBUGin
             Console.WriteLine("<{0}", Response);
 #endif

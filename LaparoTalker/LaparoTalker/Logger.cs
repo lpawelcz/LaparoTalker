@@ -10,13 +10,17 @@ namespace LaparoTalker
     public class Logger
     {
         private string m_exePath = string.Empty;
-        public Logger() {}
+        public string log_name;
+        public Logger(string logname)
+        {
+            log_name = logname;
+        }
         public void LogWrite(string logMessage)
         {
             m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             try
             {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + "log.txt"))
+                using (StreamWriter w = File.AppendText(m_exePath + "\\" + log_name + ".txt"))
                 {
                     Log(logMessage, w);
                 }
