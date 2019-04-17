@@ -37,7 +37,12 @@ namespace LaparoTalker
 
         public string FloatFormat()
         {
-            return string.Format("{0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], vals[6]);
+            string[] vals_string = new string[7];
+            for (int i = 0; i < 7; i++)
+            {
+                vals_string[i] = vals[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
+            }
+            return string.Format("{0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
         }
         public void ExtractData()
         {
