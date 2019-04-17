@@ -1,0 +1,7 @@
+1 insert od ok. 41 do 360 
+2kwat
+3kwat
+4kwat
+5kwat
+6 k¹t w stopniach od 0 do 360 co 0.25
+7 otwarcie w % od 0 do 100
