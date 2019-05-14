@@ -23,7 +23,7 @@ namespace LaparoTalker
         static Thread ReaderThread;
 
         static string portName = "nazwa";
-        static string filepath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\prawy_instrument_takie_cos_o.txt";
+        static string filepaths = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\prawy_instrument_takie_cos_o.txt";
 
 
         public void Main()
@@ -48,7 +48,7 @@ namespace LaparoTalker
 
         }
 
-        public void FromFileBegin()
+        public void FromFileBegin(string filepath)
         {
             FileReader Reader = new FileReader(filepath, ref _continue, ref byteCarrier);
             ReaderThread = new Thread(new ThreadStart(Reader.Run));

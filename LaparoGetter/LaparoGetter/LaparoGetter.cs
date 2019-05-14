@@ -14,9 +14,9 @@ namespace LaparoTalker
         {
             program.Main();
         }
-        public void FileInit()
+        public void FileInit(string filepath)
         {
-            program.FromFileBegin();
+            program.FromFileBegin(filepath);
         }
 
         public void GetVals(ref float[] Values)
