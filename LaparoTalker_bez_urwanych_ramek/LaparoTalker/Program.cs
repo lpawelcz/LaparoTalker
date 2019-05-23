@@ -21,7 +21,7 @@ namespace LaparoTalker
         static Logger RawLogger = new Logger("RawLogg");
 
 
-        static string filepath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\prawy_insert_krotki.txt";
+        static string filepath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\";
         static string portName = "nazwa";
         static int order = 0;                                                       // wybór w menu
 
@@ -33,7 +33,10 @@ namespace LaparoTalker
 
             if (ProgramMode == 1)
             {
-                FileReader Reader = new FileReader(filepath, ref _continue, ref byteCarrier);
+                Console.WriteLine("wpisz nazwe pliku wraz z rozszerzeniem .txt");
+                string name = Console.ReadLine();
+                filepath += name;
+                FileReader Reader = new FileReader(filepath, ref _continue, ref byteCarrier, 200);
                 Thread ReaderThread = new Thread(new ThreadStart(Reader.Run));
                 ReaderThread.Start();
 

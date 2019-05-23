@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace LaparoTalker
 {
@@ -10,26 +11,26 @@ namespace LaparoTalker
         public float[] Values = new float[7];
 
         LaparoTalker program = new LaparoTalker();
-        public void Init()
+        public void Init()      // rozpoczęcie pracy z trenażerem
         {
             program.Main();
         }
-        public void FileInit(string filepath)
+        public void FileInit(string filepath, int delay)    // rozpoczęcie pracy z plikiem z surowymi danymi, należy podać ścieżkę i odstęp czasowy pomiędzy kolejnymi odczytami w ms
         {
-            program.FromFileBegin(filepath);
+            program.FromFileBegin(filepath, delay);
         }
 
-        public void GetVals(ref float[] Values)
+        public void GetVals()             // pobierz wartości do tablicy
         {
             program.GetValues(ref Values);
         }
 
-        public void End()
+        public void End()      // zakończenie pracy z trenażerem
         {
             program.End();
         }
 
-        public void FileEnd()
+        public void FileEnd()       // zakończenie pracy z plikiem
         {
             program.FromFileEnd();
         }

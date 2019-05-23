@@ -18,10 +18,10 @@ namespace LaparoTalker
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
         static BytesCarrier byteCarrier = new BytesCarrier();
-        static Logger RawLogger = new Logger("RawLogg");
+        static Logger RawLogger = new Logger("RawLog");
 
 
-        static string filepath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\prawy_instrument_takie_cos_o.txt";
+        static string filepath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\";
         static string portName = "nazwa";
         static int order = 0;                                                       // wybór w menu
 
@@ -33,6 +33,9 @@ namespace LaparoTalker
 
             if (ProgramMode == 1)
             {
+                Console.WriteLine("wpisz nazwe pliku wraz z rozszerzeniem .txt");
+                string name = Console.ReadLine();
+                filepath += name;
                 FileReader Reader = new FileReader(filepath, ref _continue, ref byteCarrier);
                 Thread ReaderThread = new Thread(new ThreadStart(Reader.Run));
                 ReaderThread.Start();

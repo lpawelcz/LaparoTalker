@@ -15,18 +15,20 @@ namespace LaparoTalker
         static byte[] CMP = { 0x43, 0x4D, 0x50, 0x0, 0x0, 0x0, 0xE0, 0x0 };
         static byte[] CMS = { 0x43, 0x4D, 0x53, 0x0, 0x0, 0x0, 0xE3, 0x0 };
 
+        static public Mutex mutex = new Mutex();
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
-        static BytesCarrier byteCarrier = new BytesCarrier();
+        static BytesCarrier byteCarrier = new BytesCarrier(ref mutex);
         static Logger RawLogger = new Logger("RawLogg");
         static Thread PingerThread;
         static Thread ReaderThread;
+
 
         static string portName = "nazwa";
         static string filepaths = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\prawy_instrument_takie_cos_o.txt";
 
 
-        public void Main()
+        public void Main()  // rozpoczęcie pracy z trenażerem
         {
 
                 if (FindPortName() == -1)                                               // Wyszukanie odpowiedniego portu
@@ -45,23 +47,24 @@ namespace LaparoTalker
 
                 Port.Write(CMS, 0, CMS.Length);                     // wyślij wybraną komendę
                 Port.Write(CMS, 0, CMS.Length);                     // wyślij wybraną komendę
+    Thread.Sleep(3000);
 
         }
 
-        public void FromFileBegin(string filepath)
+        public void FromFileBegin(string filepath, int delay)  // rozpoczęcie pracy z plikiem z surowymi danymi, należy podać ścieżkę i odstęp czasowy pomiędzy kolejnymi odczytami w ms
         {
-            FileReader Reader = new FileReader(filepath, ref _continue, ref byteCarrier);
+            FileReader Reader = new FileReader(filepath, ref _continue, ref byteCarrier, delay);
             ReaderThread = new Thread(new ThreadStart(Reader.Run));
             ReaderThread.Start();
 
         }
-        public void FromFileEnd()
+        public void FromFileEnd()    // zakończenie pracy z plikiem
         {
             ReaderThread.Join();
             System.Console.ReadKey();
         }
 
-        public void End()
+        public void End()      // zakończenie pracy z trenażerem
         {
             _continue.bContinue = false;
 
@@ -70,9 +73,11 @@ namespace LaparoTalker
             ClosePort();
         }
 
-        public void GetValues(ref float[] Values)
+        public void GetValues(ref float[] Values)             // pobierz wartości do tablicy
         {
+            mutex.WaitOne();
             Values = byteCarrier.vals;
+            mutex.ReleaseMutex();
         }
 
         public void Init()

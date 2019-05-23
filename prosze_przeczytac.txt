@@ -1,3 +1,3 @@
-Przesy³amy program w dwóch wersjach
-wersja bez urwanych ramek zosta³a przetestowana z symulatorem Laparo i wiemy, ¿e dzia³a ona poprawnie
-wersja z zapisem urwanych ramek nie mia³a okazji byæ przetestowana, z tego wzglêdu, nie jest pewne, czy odczytywane dane bêd¹ poprawne
+Przesy³amy trzy archiwa z projektami VS
+Dwie wersje programu technicznego LaparoTalker, tak jak poprzednio
+oraz projekt LaparoGetter realizuj¹cy bibliotekê dll do u¿ycia w Unity.
