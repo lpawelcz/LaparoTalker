@@ -55,10 +55,10 @@ namespace LaparoTalker
                         if(result[0]=="R")
                         {
                             Console.WriteLine("R");
-                            for (int i=1;i<8;i++)
+                            for (int i=0;i<7;i++)
                             {
 
-                                Bytes.valsR[i] = float.Parse(result[i]);
+                                Bytes.valsR[i] = float.Parse(result[i+1]);
                                 Console.WriteLine("{0}", Bytes.valsR[i]);
 
                             }                    
@@ -66,10 +66,10 @@ namespace LaparoTalker
                         else
                         {
                             Console.WriteLine("L");
-                            for (int i = 1; i < 8; i++)
+                            for (int i = 0; i < 7; i++)
                             {
 
-                                Bytes.valsL[i] = float.Parse(result[i]);
+                                Bytes.valsL[i] = float.Parse(result[i+1]);
                                 Console.WriteLine("{0}", Bytes.valsL[i]);
 
                             }
