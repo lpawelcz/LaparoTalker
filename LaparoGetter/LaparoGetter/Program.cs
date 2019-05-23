@@ -73,10 +73,16 @@ namespace LaparoTalker
             ClosePort();
         }
 
-        public void GetValues(ref float[] Values)             // pobierz wartości do tablicy
+        public void GetValuesL(ref float[] Values)             // pobierz wartości do tablicy
         {
             mutex.WaitOne();
-            Values = byteCarrier.vals;
+            Values = byteCarrier.valsL;
+            mutex.ReleaseMutex();
+        }
+        public void GetValuesR(ref float[] Values)             // pobierz wartości do tablicy
+        {
+            mutex.WaitOne();
+            Values = byteCarrier.valsR;
             mutex.ReleaseMutex();
         }
 

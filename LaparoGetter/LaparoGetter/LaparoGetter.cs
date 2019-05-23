@@ -8,7 +8,8 @@ namespace LaparoTalker
 {
     public class LaparoGetter
     {
-        public float[] Values = new float[7];
+        public float[] ValuesL = new float[7];
+        public float[] ValuesR = new float[7];
 
         LaparoTalker program = new LaparoTalker();
         public void Init()      // rozpoczęcie pracy z trenażerem
@@ -22,7 +23,8 @@ namespace LaparoTalker
 
         public void GetVals()             // pobierz wartości do tablicy
         {
-            program.GetValues(ref Values);
+            program.GetValuesL(ref ValuesL);
+            program.GetValuesR(ref ValuesR);
         }
 
         public void End()      // zakończenie pracy z trenażerem
