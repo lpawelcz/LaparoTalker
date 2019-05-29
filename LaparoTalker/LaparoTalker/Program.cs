@@ -173,7 +173,6 @@ namespace LaparoTalker
             byteCarrier.flush();
 
             string RawLog = System.Text.Encoding.UTF8.GetString(byteCarrier.bytes, 0, 200);           // konwersja bajtów na string
-            string FloatsLog = byteCarrier.FloatFormat();
             RawLogger.LogWrite(RawLog);                                                                  // Wysłanie danych do pliku
 
 #if DEBUGin

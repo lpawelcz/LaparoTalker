@@ -51,15 +51,30 @@ namespace LaparoTalker
                     do
                     {
                         Thread.Sleep(delay);
-                        int i = 0;
-                        foreach (string result in Regex.Split(line, @"\s+"))
+                        string[] result = Regex.Split(line, @"\s+");
+                        if(result[0]=="R")
                         {
-                            if (i < 7)
+                            //Console.WriteLine("R");
+                            for (int i=0;i<7;i++)
                             {
-                                Bytes.vals[i] = float.Parse(result);
-//                                Console.WriteLine("{0}", Bytes.vals[i]);
-                                i++;
+
+                                Bytes.valsR[i] = float.Parse(result[i+1]);
+                            //    Console.WriteLine("{0}", Bytes.valsR[i]);
+
+                            }                    
+                            Console.WriteLine(Bytes.FloatFormatR());
+                        }
+                        else
+                        {
+                            //Console.WriteLine("L");
+                            for (int i = 0; i < 7; i++)
+                            {
+
+                                Bytes.valsL[i] = float.Parse(result[i+1]);
+                            //    Console.WriteLine("{0}", Bytes.valsL[i]);
+
                             }
+                            Console.WriteLine(Bytes.FloatFormatL());
                         }
                         line = reader.ReadLine();
                         //                      Bytes.ExtractData();

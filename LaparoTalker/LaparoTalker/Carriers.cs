@@ -20,7 +20,8 @@ namespace LaparoTalker
         static Logger FloatsLogger = new Logger("FloatLog");
         public static byte[] CMRR = { 0x43, 0x4D, 0x52, 0x52 };
         public static byte[] CMRL = { 0x43, 0x4D, 0x52, 0x4C };
-        public float[] vals = new float[7];
+        public float[] valsR = new float[7];
+        public float[] valsL = new float[7];
         public byte[] bytes;
         public BytesCarrier()
         {
@@ -35,15 +36,29 @@ namespace LaparoTalker
             }
         }
 
-        public string FloatFormat()
+        public string FloatFormatR()
         {
             string[] vals_string = new string[7];
             for (int i = 0; i < 7; i++)
             {
-                vals_string[i] = vals[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
+                //                vals_string[i] = valsR[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
+                vals_string[i] = valsR[i].ToString();
             }
-            return string.Format("{0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
+            return string.Format("R {0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
         }
+
+        public string FloatFormatL()
+        {
+            string[] vals_string = new string[7];
+            for (int i = 0; i < 7; i++)
+            {
+                //               vals_string[i] = valsL[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
+                vals_string[i] = valsL[i].ToString();
+
+            }
+            return string.Format("L {0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
+        }
+
         public void ExtractData()
         {
             int index = 0;
@@ -55,26 +70,31 @@ namespace LaparoTalker
                     for (int i = 4, j = 0; j < 7; i += 4, j++)
                     {
                         if (index + i < 197)
-                            vals[j] = System.BitConverter.ToSingle(bytes, index + i);
+                            valsR[j] = System.BitConverter.ToSingle(bytes, index + i);
                     }
-                    FloatsLogger.LogWrite(FloatFormat());
-                    Console.WriteLine(FloatFormat());
+                    FloatsLogger.LogWrite(FloatFormatR());
+                    Console.WriteLine(FloatFormatR());
                     index += 28;
                 }
             } while (index != -1);
 
-            //index = IndexOf(Bytes.bytes, CMRL);
-            //if (index == -1)
-            //{
-            //    return;
-            //}
-            //else
-            //{
-            //    for (int i = 1, j = 0; j < 7; i += 4, j++)
-            //    {
-            //        vals[j] = System.BitConverter.ToSingle(Bytes.bytes, index + i);
-            //    }
-            //}
+            index = 0;
+            do
+            {
+                index = IndexOf(index, CMRL);
+                if (index != -1)
+                {
+                    for (int i = 4, j = 0; j < 7; i += 4, j++)
+                    {
+                        if (index + i < 197)
+                            valsL[j] = System.BitConverter.ToSingle(bytes, index + i);
+                    }
+                    FloatsLogger.LogWrite(FloatFormatL());
+                    Console.WriteLine(FloatFormatL());
+                    index += 28;
+                }
+            } while (index != -1);
+
         }
 
         public int IndexOf(int startingIndex, byte[] patternToFind)
