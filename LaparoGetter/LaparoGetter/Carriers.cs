@@ -50,7 +50,7 @@ namespace LaparoTalker
             {
                 vals_string[i] = valsR[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
-            return string.Format("R {0,-10} {1,-10} {2,-10} {3,-10} {4,-10} {5,-10} {6,-10}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
+            return string.Format("R {0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
         }
 
         public string FloatFormatL()
@@ -60,7 +60,7 @@ namespace LaparoTalker
             {
                 vals_string[i] = valsL[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
-            return string.Format("L {0,-10} {1,-10} {2,-10} {3,-10} {4,-10} {5,-10} {6,-10}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
+            return string.Format("L {0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
         }
 
         public void ExtractData()
