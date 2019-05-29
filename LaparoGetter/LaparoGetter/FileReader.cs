@@ -62,7 +62,7 @@ namespace LaparoTalker
                                // Console.WriteLine("{0}", Bytes.valsR[i]);
 
                             }
-                            Console.WriteLine(Bytes.FloatFormatR());
+                           // Console.WriteLine(Bytes.FloatFormatR());
                         }
                         else
                         {
@@ -74,7 +74,7 @@ namespace LaparoTalker
                                // Console.WriteLine("{0}", Bytes.valsL[i]);
 
                             }
-                            Console.WriteLine(Bytes.FloatFormatL());
+                            //Console.WriteLine(Bytes.FloatFormatL());
                         }
                         line = reader.ReadLine();
                         //                      Bytes.ExtractData();

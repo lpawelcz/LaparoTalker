@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using LaparoTalker;
 
 namespace DLL_Tester
@@ -21,12 +22,26 @@ namespace DLL_Tester
             lapGetter.FileInit(filename, 100);
             //lapGetter.Init();
 
-            lapGetter.GetVals();
-            //zapisadnie wartości do tablicy
-            for (int i = 0; i < 7; i++)
-                data[i] = lapGetter.ValuesR[i];
-            for (int i = 0; i < 7; i++)
-                data[i + 7] = lapGetter.ValuesL[i];
+            for (int j = 0; j < 100; j++)
+            {
+                Thread.Sleep(300);
+                lapGetter.GetVals();
+                //zapisadnie wartości do tablicy
+                for (int i = 0; i < 7; i++)
+                    data[i] = lapGetter.ValuesR[i];
+                for (int i = 0; i < 7; i++)
+                    data[i + 7] = lapGetter.ValuesL[i];
+
+                Console.Write("all: ");
+                for(int k=0;k<14;k++)
+                {
+                    Console.Write("{0,-12} ", data[k]);
+                }
+                Console.Write("\n");
+            }
+
+            //lapGetter.FileEnd();
+            lapGetter.End();
 
         }
     }
