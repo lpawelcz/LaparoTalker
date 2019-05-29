@@ -1,3 +1,0 @@
-Przesy³amy trzy archiwa z projektami VS
-Dwie wersje programu technicznego LaparoTalker, tak jak poprzednio
-oraz projekt LaparoGetter realizuj¹cy bibliotekê dll do u¿ycia w Unity.

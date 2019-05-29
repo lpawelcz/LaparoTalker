@@ -19,7 +19,7 @@ namespace LaparoTalker
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
         static BytesCarrier byteCarrier = new BytesCarrier(ref mutex);
-        static Logger RawLogger = new Logger("RawLogg");
+       // static Logger RawLogger = new Logger("RawLogg");
         static Thread PingerThread;
         static Thread ReaderThread;
 
@@ -31,12 +31,13 @@ namespace LaparoTalker
         public void Main()  // rozpoczęcie pracy z trenażerem
         {
 
-                if (FindPortName() == -1)                                               // Wyszukanie odpowiedniego portu
-                {
-                    Console.WriteLine("Blad! Nie znaleziono urzadzenia!");
-                    return;
-                }
-                Init();                                                                 // ustalenie parametrów połączenia
+            if (FindPortName() == -1)                                               // Wyszukanie odpowiedniego portu
+            {
+                Console.WriteLine("Blad! Nie znaleziono urzadzenia!");
+                return;
+            }
+            // portName = "COM4";
+            Init();                                                                 // ustalenie parametrów połączenia
                 OpenPort();                                                             // Otwarcie portu
 
                 Pinger Pinger = new Pinger(Port, ref _continue, CMP);                   // Wątek pingujący
