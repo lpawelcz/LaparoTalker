@@ -1,4 +1,18 @@
-﻿using System;
+﻿//----------------------------------------------------------------------------------------------------------------------//
+//                                  Projekt zrealizowany na Politechnice Wrocławskiej                                   //
+//                                                 Wydział Elektroniki,                                                 // 
+//                                                Kierunek Informatyka,                                                 //
+//                                          Specjalność Inżynieria Internetowa                                          //
+//                                                                                                                      //
+//      Projekt Zespołowy                                                                                               //
+//      Temat: System wirtualnej rzeczywistości dla symulacji operacji laparoskopowych                                  //
+//      Prowadzący: Dr inż. Jan Nikodem                                                                                 //
+//      Autorzy: Przemysław Wujek, Dawid Kurzydło, Jakub Kozioł, Konrad Olszewski, Karol Wojdyła, Paweł Czarnecki       //
+//                                                                                                                      //
+//                                                                                  Wrocław, rok akademicki 2018/2019   //
+//----------------------------------------------------------------------------------------------------------------------//
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,8 +55,8 @@ namespace LaparoTalker
             string[] vals_string = new string[7];
             for (int i = 0; i < 7; i++)
             {
-                //                vals_string[i] = valsR[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
-                vals_string[i] = valsR[i].ToString();
+                //                vals_string[i] = valsR[i].ToString(System.Globalization.CultureInfo.InvariantCulture);    // zapis z kropką
+                vals_string[i] = valsR[i].ToString();           // zapis z przecinkiem 
             }
             return string.Format("R {0,-15} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}", vals_string[0], vals_string[1], vals_string[2], vals_string[3], vals_string[4], vals_string[5], vals_string[6]);
         }

@@ -1,4 +1,18 @@
-﻿using System;
+﻿//----------------------------------------------------------------------------------------------------------------------//
+//                                  Projekt zrealizowany na Politechnice Wrocławskiej                                   //
+//                                                 Wydział Elektroniki,                                                 // 
+//                                                Kierunek Informatyka,                                                 //
+//                                          Specjalność Inżynieria Internetowa                                          //
+//                                                                                                                      //
+//      Projekt Zespołowy                                                                                               //
+//      Temat: System wirtualnej rzeczywistości dla symulacji operacji laparoskopowych                                  //
+//      Prowadzący: Dr inż. Jan Nikodem                                                                                 //
+//      Autorzy: Przemysław Wujek, Dawid Kurzydło, Jakub Kozioł, Konrad Olszewski, Karol Wojdyła, Paweł Czarnecki       //
+//                                                                                                                      //
+//                                                                                  Wrocław, rok akademicki 2018/2019   //
+//----------------------------------------------------------------------------------------------------------------------//
+
+using System;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -14,7 +28,6 @@ namespace LaparoTalker
         static FlagCarrier continuing;
         static BytesCarrier Bytes;
 
-        //        public ResponseListener(SerialPort port, ref FlagCarrier cont)
         public FileReader(string filepath, ref FlagCarrier cont, ref BytesCarrier bytesCarrier, int delay)
         {
             path = filepath;
@@ -22,24 +35,6 @@ namespace LaparoTalker
             continuing = cont;
             this.delay = delay;
         }
-        //public void Run()
-        //{
-        //    FileStream fs = File.OpenRead(path);
-        //    // while (continuing.bContinue)
-        //    //  {
-        //    try
-        //    {
-        //        do
-        //        {
-        //            Thread.Sleep(delay);
-        //            readbytes = fs.Read(Bytes.bytes, 0, Bytes.bytes.Length);
-        //            Bytes.ExtractData();
-        //            Bytes.flush();
-        //        } while (readbytes != 0);
-        //    }
-        //    catch (TimeoutException) { }
-        //    // }
-        //}
 
         public void Run()
         {
@@ -77,8 +72,6 @@ namespace LaparoTalker
                             //Console.WriteLine(Bytes.FloatFormatL());
                         }
                         line = reader.ReadLine();
-                        //                      Bytes.ExtractData();
-                        //                      Bytes.flush();
                     } while (line != null);
                 }
             }
