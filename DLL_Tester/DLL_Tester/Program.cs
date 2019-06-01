@@ -13,49 +13,50 @@
 //----------------------------------------------------------------------------------------------------------------------//
 
 using System;
-using System.IO;
-using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using LaparoTalker;
 
-namespace LaparoTalker
+namespace DLL_Tester
 {
-
-    public class Logger
+    class Program
     {
-        private string m_exePath = string.Empty;
-        public string log_name;
-        public Logger(string logname)
+        static private LaparoGetter lapGetter;
+        static public string filename; //sciezka do czytania danych z pliku
+        static private float[] data;//tablica z danymi z Laparo
+        static void Main(string[] args)
         {
-            log_name = logname;
-        }
-        public void LogWrite(string logMessage)
-        {
-            m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            try
-            {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + log_name + ".txt"))
-                {
-                    Log(logMessage, w);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-        }
+            filename = "lewy_zasieg_inserta.txt";
+            data = new float[14];
 
-        public void Log(string logMessage, TextWriter txtWriter)
-        {
-            try
+            lapGetter = new LaparoGetter();
+
+            lapGetter.FileInit(filename, 100);
+            //lapGetter.Init();
+
+            for (int j = 0; j < 100; j++)
             {
-#if EXTENDED_LOG
-                txtWriter.WriteLine("{0} {1}: {2}", DateTime.Now.ToLongTimeString(),DateTime.Now.ToShortDateString(), logMessage);
-#else
-                txtWriter.WriteLine("{0}", logMessage);
-#endif
+                Thread.Sleep(300);
+                lapGetter.GetVals();
+                //zapisadnie wartości do tablicy
+                for (int i = 0; i < 7; i++)
+                    data[i] = lapGetter.ValuesR[i];
+                for (int i = 0; i < 7; i++)
+                    data[i + 7] = lapGetter.ValuesL[i];
+
+                Console.Write("all: ");
+                for(int k=0;k<14;k++)
+                {
+                    Console.Write("{0,-12} ", data[k]);
+                }
+                Console.Write("\n");
             }
-            catch (Exception ex)
-            {
-            }
+
+            //lapGetter.FileEnd();
+            lapGetter.End();
+
         }
     }
-
 }
