@@ -1,4 +1,18 @@
-﻿using System;
+﻿//----------------------------------------------------------------------------------------------------------------------//
+//                                  Projekt zrealizowany na Politechnice Wrocławskiej                                   //
+//                                                 Wydział Elektroniki,                                                 // 
+//                                                Kierunek Informatyka,                                                 //
+//                                          Specjalność Inżynieria Internetowa                                          //
+//                                                                                                                      //
+//      Projekt Zespołowy                                                                                               //
+//      Temat: System wirtualnej rzeczywistości dla symulacji operacji laparoskopowych                                  //
+//      Prowadzący: Dr inż. Jan Nikodem                                                                                 //
+//      Autorzy: Przemysław Wujek, Dawid Kurzydło, Jakub Kozioł, Konrad Olszewski, Karol Wojdyła, Paweł Czarnecki       //
+//                                                                                                                      //
+//                                                                                  Wrocław, rok akademicki 2018/2019   //
+//----------------------------------------------------------------------------------------------------------------------//
+
+using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +32,7 @@ namespace LaparoTalker
 
     public class BytesCarrier
     {
-//        static Logger FloatsLogger = new Logger("FloatLog");
+//      static Logger FloatsLogger = new Logger("FloatLog");
         public static byte[] CMRR = { 0x43, 0x4D, 0x52, 0x52 };
         public static byte[] CMRL = { 0x43, 0x4D, 0x52, 0x4C };
         public static int remaining_bytes;
@@ -104,54 +118,6 @@ namespace LaparoTalker
             } while (index != -1);
 
         }
-
-
-        //public void ExtractData()
-        //{
-        //    int index = 0;
-        //    if (index == 0 && remaining_bytes>0)    // kiedy zaczynami sprawdzać nową partię danych i w poprzedniej była urwana komenda
-        //    {
-        //        for (int i = 0, iterator = 32 - remaining_bytes; iterator < 32; i++, iterator++)
-        //        {
-        //            lost_bytes[i] = bytes[i];   // zapisz drugą część podzielonej komendy
-        //        }
-        //        mutex.WaitOne();
-        //        for (int i = 4, j = 0; j < 7; i += 4, j++)
-        //        {              
-        //            vals[j] = System.BitConverter.ToSingle(lost_bytes, i);   // zapisz dane z urwanej komendy
-        //        }
-        //        mutex.ReleaseMutex();
-        //        //                FloatsLogger.LogWrite(FloatFormat());   // zapisz do pliku
-        //        //                Console.WriteLine(FloatFormat());       // wypisz
-        //        remaining_bytes = 0;                    // zeruj liczbę bajtów do odczytania z początku kolejnej partii
-        //    }
-        //    do
-        //    {
-        //        index = IndexOf(index, CMRR);           // znajdź kolejne wystąpienie CMRR w odpowiedzi, licząc od indeksu
-        //        if (index != -1)                        // jeśli znaleziono
-        //        {
-        //            if(index > 167)                     // zapisz brakujące bajty do odczytania w kolejnej partii danych
-        //            {
-        //                int iterator = 199 - index;
-        //                remaining_bytes = 32 - iterator;
-        //                for(int i=0;i<iterator;i++)
-        //                {
-        //                    lost_bytes[i] = bytes[index + i];   // zapisz pierwszą część podzielonej komendy
-        //                }
-        //                break;
-        //            }
-        //            mutex.WaitOne();
-        //            for (int i = 4, j = 0; j < 7; i += 4, j++)      // i - przesuwanie się po odebranej komendzie, j - index danej
-        //            {
-        //                 vals[j] = System.BitConverter.ToSingle(bytes, index + i);   // zapisuj kolejne floaty
-        //            }
-        //            mutex.ReleaseMutex();
-        //            //                    FloatsLogger.LogWrite(FloatFormat());   // zapisz do pliku
-        //            //                   Console.WriteLine(FloatFormat());       // wypisz
-        //            index += 28;                            // przesuń się na koniec danych w komendzie i szukaj kolejnej
-        //        }
-        //    } while (index != -1);
-        //}
 
         public int IndexOf(int startingIndex, byte[] patternToFind) // zwraca indeks początku komendy określonej w 2 argumencie, znaleziony w tablicy z odebranymi surowymi danymi
         {

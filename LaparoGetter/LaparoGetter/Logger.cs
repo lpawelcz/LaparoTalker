@@ -1,4 +1,16 @@
-﻿//#define EXTENDED_LOG
+﻿//----------------------------------------------------------------------------------------------------------------------//
+//                                  Projekt zrealizowany na Politechnice Wrocławskiej                                   //
+//                                                 Wydział Elektroniki,                                                 // 
+//                                                Kierunek Informatyka,                                                 //
+//                                          Specjalność Inżynieria Internetowa                                          //
+//                                                                                                                      //
+//      Projekt Zespołowy                                                                                               //
+//      Temat: System wirtualnej rzeczywistości dla symulacji operacji laparoskopowych                                  //
+//      Prowadzący: Dr inż. Jan Nikodem                                                                                 //
+//      Autorzy: Przemysław Wujek, Dawid Kurzydło, Jakub Kozioł, Konrad Olszewski, Karol Wojdyła, Paweł Czarnecki       //
+//                                                                                                                      //
+//                                                                                  Wrocław, rok akademicki 2018/2019   //
+//----------------------------------------------------------------------------------------------------------------------//
 
 using System;
 using System.IO;

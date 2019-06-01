@@ -1,5 +1,16 @@
-﻿
-//#define DEBUGin
+﻿//----------------------------------------------------------------------------------------------------------------------//
+//                                  Projekt zrealizowany na Politechnice Wrocławskiej                                   //
+//                                                 Wydział Elektroniki,                                                 // 
+//                                                Kierunek Informatyka,                                                 //
+//                                          Specjalność Inżynieria Internetowa                                          //
+//                                                                                                                      //
+//      Projekt Zespołowy                                                                                               //
+//      Temat: System wirtualnej rzeczywistości dla symulacji operacji laparoskopowych                                  //
+//      Prowadzący: Dr inż. Jan Nikodem                                                                                 //
+//      Autorzy: Przemysław Wujek, Dawid Kurzydło, Jakub Kozioł, Konrad Olszewski, Karol Wojdyła, Paweł Czarnecki       //
+//                                                                                                                      //
+//                                                                                  Wrocław, rok akademicki 2018/2019   //
+//----------------------------------------------------------------------------------------------------------------------//
 
 using System;
 using System.Management;
@@ -19,7 +30,6 @@ namespace LaparoTalker
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
         static BytesCarrier byteCarrier = new BytesCarrier(ref mutex);
-       // static Logger RawLogger = new Logger("RawLogg");
         static Thread PingerThread;
         static Thread ReaderThread;
 
@@ -106,23 +116,11 @@ namespace LaparoTalker
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
             foreach (ManagementObject ManObj in searcher.Get())
             {
-#if DEBUGin
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine("DeviceID: {0}", ManObj["DeviceID"].ToString());
-                Console.WriteLine("PNPDeviceID: {0}", ManObj["PNPDeviceID"].ToString());
-                Console.WriteLine("Name: {0}", ManObj["Name"].ToString());
-                Console.WriteLine("Caption: {0}", ManObj["Caption"].ToString());
-                Console.WriteLine("Description: {0}", ManObj["Description"].ToString());
-                Console.WriteLine("Status: {0}", ManObj["Status"].ToString());
-                Console.WriteLine("\n");
-#endif
+
                 if (ManObj["DeviceID"].ToString().Contains("PID_5740"))                     //Laparo: PID_5740      myEchoDevice: PID_6001
                 {
                     string[] substrings = ManObj["Name"].ToString().Split('(');             // Wyłuskanie nazwy portu w formacie "COM<<numer>>"
                     substrings = substrings[1].Split(')');
-#if DEBUGin
-                    Console.WriteLine("Port do podlaczenia: {0}", substrings[0]);
-#endif
                     portName = substrings[0];
                 }
 
@@ -154,14 +152,7 @@ namespace LaparoTalker
             if (nbrDataRead == 0)                                                                       // jeśli nie odczytano danych, nie rób nic
                 return;
             byteCarrier.ExtractData();
-//            string RawLog = System.Text.Encoding.UTF8.GetString(byteCarrier.bytes, 0, 200);           // konwersja bajtów na string
-//            RawLogger.LogWrite(RawLog);                                                               // Wysłanie danych do pliku
             byteCarrier.flush();
-
-
-#if DEBUGin
-            Console.WriteLine("<{0}", Response);
-#endif
 
         }
 
