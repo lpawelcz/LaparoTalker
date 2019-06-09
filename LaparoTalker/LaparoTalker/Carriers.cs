@@ -37,6 +37,9 @@ namespace LaparoTalker
         public float[] valsR = new float[7];
         public float[] valsL = new float[7];
         public byte[] bytes;
+
+        public int bytes_cnt { get; internal set; }
+
         public BytesCarrier()
         {
             bytes = new byte[200];

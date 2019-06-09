@@ -40,18 +40,20 @@ namespace LaparoTalker
         public float[] valsL = new float[7];
         public float[] valsR = new float[7];
         public byte[] bytes;
+        public static int bytes_cnt;
         public Mutex mutex;
         public BytesCarrier(ref Mutex mutex)
         {
             this.mutex = mutex;
+            bytes_cnt = 0;
             remaining_bytes = 0;
-            bytes = new byte[200];
+            //bytes = new byte[200];
             lost_bytes = new byte[32];
         }
 
         public void flush()                             // czyść bufor odebranych danych
         {
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < bytes.Length; i++)
             {
                 bytes[i] = 0x0;
             }
@@ -88,7 +90,7 @@ namespace LaparoTalker
                     mutex.WaitOne();
                     for (int i = 4, j = 0; j < 7; i += 4, j++)
                     {
-                        if (index + i < 197)
+                        if (index + i < bytes.Length-3)
                             valsR[j] = System.BitConverter.ToSingle(bytes, index + i);
                     }
                     mutex.ReleaseMutex();
@@ -107,7 +109,7 @@ namespace LaparoTalker
                     mutex.WaitOne();
                     for (int i = 4, j = 0; j < 7; i += 4, j++)
                     {
-                        if (index + i < 197)
+                        if (index + i < bytes.Length - 3)
                             valsL[j] = System.BitConverter.ToSingle(bytes, index + i);
                     }
                     mutex.ReleaseMutex();
