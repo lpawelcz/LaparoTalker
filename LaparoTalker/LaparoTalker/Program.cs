@@ -13,7 +13,6 @@
 //----------------------------------------------------------------------------------------------------------------------//
 
 using System;
-using System.Management;
 using System.IO.Ports;
 using System.Threading;
 using System.IO;

@@ -40,12 +40,10 @@ namespace LaparoTalker
         public float[] valsL = new float[7];
         public float[] valsR = new float[7];
         public byte[] bytes;
-        public static int bytes_cnt;
         public Mutex mutex;
         public BytesCarrier(ref Mutex mutex)
         {
             this.mutex = mutex;
-            bytes_cnt = 0;
             remaining_bytes = 0;
             //bytes = new byte[200];
             lost_bytes = new byte[32];

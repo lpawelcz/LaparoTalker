@@ -40,8 +40,9 @@ namespace LaparoTalker
                 byteCarrier.flush();
 
                 RawLogger.LogWrite(s);                                                               // Wysłanie danych do pliku
-            }  
+            }
         }
+
 
     }
 }

@@ -13,7 +13,6 @@
 //----------------------------------------------------------------------------------------------------------------------//
 
 using System;
-using System.Management;
 using System.IO.Ports;
 using System.Threading;
 using System.IO;
@@ -30,8 +29,10 @@ namespace LaparoTalker
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
         static BytesCarrier byteCarrier = new BytesCarrier(ref mutex);
+        static string portFilePath = Path.Combine(Directory.GetCurrentDirectory(), "/portName.txt");
         static Thread PingerThread;
         static Thread ReaderThread;
+        static Thread PReaderThread;
 
 
         static string portName = "nazwa";
@@ -54,11 +55,13 @@ namespace LaparoTalker
                 PingerThread = new Thread(new ThreadStart(Pinger.Run));
                 PingerThread.Start();
 
-                Port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);         // zarejestrowanie obsługi zdarzenia, zdarzenie pojawia się gdy bufor osiągnie rozmiar określony w  Port.ReceivedBytesThreshold
+                PortReader PReader = new PortReader(Port, ref _continue, byteCarrier);        // wątek odbierający cyklicznie dane z portu
+                PReaderThread = new Thread(new ThreadStart(PReader.Run));
+                PReaderThread.Start();
 
                 Port.Write(CMS, 0, CMS.Length);                     // wyślij wybraną komendę
                 Port.Write(CMS, 0, CMS.Length);                     // wyślij wybraną komendę
-    Thread.Sleep(3000);
+                Thread.Sleep(3000);
 
         }
 
@@ -79,6 +82,7 @@ namespace LaparoTalker
         {
             _continue.bContinue = false;
 
+            PReaderThread.Join();
             PingerThread.Join();
             Thread.Sleep(1000);
             ClosePort();
@@ -107,28 +111,35 @@ namespace LaparoTalker
             Port.Handshake = Handshake.None;
             Port.ReadTimeout = 500;
             Port.WriteTimeout = 500;
-            Port.ReceivedBytesThreshold = 200;               // WAŻNE: liczba bajtów w buforze odczytu, która uaktywnia zapis do pliku
+            //Port.ReceivedBytesThreshold = 200;               // WAŻNE: liczba bajtów w buforze odczytu, która uaktywnia zapis do pliku
         }
 
         public int FindPortName()
         {
 
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
-            foreach (ManagementObject ManObj in searcher.Get())
-            {
+            //ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
+            //foreach (ManagementObject ManObj in searcher.Get())
+            //{
 
-                if (ManObj["DeviceID"].ToString().Contains("PID_5740"))                     //Laparo: PID_5740      myEchoDevice: PID_6001
-                {
-                    string[] substrings = ManObj["Name"].ToString().Split('(');             // Wyłuskanie nazwy portu w formacie "COM<<numer>>"
-                    substrings = substrings[1].Split(')');
-                    portName = substrings[0];
-                }
+            //    if (ManObj["DeviceID"].ToString().Contains("PID_5740"))                     //Laparo: PID_5740      myEchoDevice: PID_6001
+            //    {
+            //        string[] substrings = ManObj["Name"].ToString().Split('(');             // Wyłuskanie nazwy portu w formacie "COM<<numer>>"
+            //        substrings = substrings[1].Split(')');
+            //        portName = substrings[0];
+            //    }
 
-            }
-            if (portName == "nazwa")
-                return -1;
-            else
+            //}
+            //if (portName == "nazwa")
+            //    return -1;
+            //else
+            //    return 0;
+
+            portName = File.ReadAllLines(portFilePath)[0];
+
+            if (portName.Contains("COM"))
                 return 0;
+            else
+                return -1;
 
         }
 
@@ -142,18 +153,6 @@ namespace LaparoTalker
         {
             Port.Close();
             Console.WriteLine("port {0} zostal zamkniety", portName);
-        }
-
-
-
-        public void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            int nbrDataRead = Port.Read(byteCarrier.bytes, 0, 200);
-            if (nbrDataRead == 0)                                                                       // jeśli nie odczytano danych, nie rób nic
-                return;
-            byteCarrier.ExtractData();
-            byteCarrier.flush();
-
         }
 
     }
