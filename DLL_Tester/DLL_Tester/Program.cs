@@ -1,6 +1,6 @@
 ﻿//----------------------------------------------------------------------------------------------------------------------//
 //                                  Projekt zrealizowany na Politechnice Wrocławskiej                                   //
-//                                                 Wydział Elektroniki,                                                 // 
+//                                                 Wydział Elektroniki,                                                 //
 //                                                Kierunek Informatyka,                                                 //
 //                                          Specjalność Inżynieria Internetowa                                          //
 //                                                                                                                      //
