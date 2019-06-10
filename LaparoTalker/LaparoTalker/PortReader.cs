@@ -24,22 +24,32 @@ namespace LaparoTalker
 
         public void Run()
         {
+
+            Console.WriteLine("portreader start");
             while (_continue.bContinue)
+            //while(true)
             {
+                int bytes_cnt = Port.BytesToRead;
+                if (bytes_cnt > 0)
+                {
+                    byte[] bytes = new byte[bytes_cnt]; 
+                    Port.Read(bytes, 0, bytes_cnt);
+                    byteCarrier.bytes = bytes;
+                    RawLogger.LogWrite(bytes.ToString());
+                    //string s = Port.ReadExisting();
+                    //int bytes_cnt = s.Length;
+                    //byte[] bytes;
+                    //bytes = Encoding.ASCII.GetBytes(s);
+                    //byteCarrier.bytes = bytes;
 
-                string s = Port.ReadExisting();
-                int bytes_cnt = s.Length;
-                byte[] bytes;
-                bytes = Encoding.ASCII.GetBytes(s);
-                byteCarrier.bytes = bytes;
-
-                if (bytes_cnt == 0)                                                                       // jeśli nie odczytano danych, nie rób nic
-                    return;
-
-                byteCarrier.ExtractData();
-                byteCarrier.flush();
-
-                RawLogger.LogWrite(s);                                                               // Wysłanie danych do pliku
+                    //  if (bytes_cnt == 0)                                                                       // jeśli nie odczytano danych, nie rób nic
+                    //   return;
+                    // Console.WriteLine("extract data");
+                    byteCarrier.ExtractData();
+                    byteCarrier.flush();
+                }
+                //RawLogger.LogWrite(s);                                                            // Wysłanie danych do pliku
+                Thread.Sleep(20);
             }  
         }
 

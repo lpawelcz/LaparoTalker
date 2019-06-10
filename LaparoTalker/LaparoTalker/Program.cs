@@ -17,6 +17,7 @@ using System.IO.Ports;
 using System.Threading;
 using System.IO;
 using System.Reflection;
+using System.Management;
 
 namespace LaparoTalker
 {
@@ -124,29 +125,29 @@ namespace LaparoTalker
         public static int FindPortName()
         {
 
-            //ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
-            //foreach (ManagementObject ManObj in searcher.Get())
-            //{
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PnPEntity WHERE ClassGuid=\"{4d36e978-e325-11ce-bfc1-08002be10318}\"");
+            foreach (ManagementObject ManObj in searcher.Get())
+            {
 
-            //    if (ManObj["DeviceID"].ToString().Contains("PID_5740"))                     //Laparo: PID_5740      myEchoDevice: PID_6001
-            //    {
-            //        string[] substrings = ManObj["Name"].ToString().Split('(');             // Wyłuskanie nazwy portu w formacie "COM<<numer>>"
-            //        substrings = substrings[1].Split(')');
-            //        portName = substrings[0];
-            //    }
+                if (ManObj["DeviceID"].ToString().Contains("PID_5740"))                     //Laparo: PID_5740      myEchoDevice: PID_6001
+                {
+                    string[] substrings = ManObj["Name"].ToString().Split('(');             // Wyłuskanie nazwy portu w formacie "COM<<numer>>"
+                    substrings = substrings[1].Split(')');
+                    portName = substrings[0];
+                }
 
-            //}
-            //if (portName == "nazwa")
-            //    return -1;
-            //else
-            //    return 0;
-
-            portName = File.ReadAllLines(portFilePath)[0];
-
-            if (portName.Contains("COM"))
-                return 0;
-            else
+            }
+            if (portName == "nazwa")
                 return -1;
+            else
+                return 0;
+
+            //portName = File.ReadAllLines(portFilePath)[0];
+
+            //if (portName.Contains("COM"))
+            //    return 0;
+            //else
+            //    return -1;
 
         }
 
