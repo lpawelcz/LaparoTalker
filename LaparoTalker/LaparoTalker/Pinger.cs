@@ -32,6 +32,7 @@ namespace LaparoTalker
 
         public void Run()
         {
+            Console.WriteLine("pinger start");
             while (continuing.bContinue)
             {
                 try

@@ -13,11 +13,11 @@
 //----------------------------------------------------------------------------------------------------------------------//
 
 using System;
-using System.Management;
 using System.IO.Ports;
 using System.Threading;
 using System.IO;
 using System.Reflection;
+using System.Management;
 
 namespace LaparoTalker
 {
@@ -29,11 +29,13 @@ namespace LaparoTalker
         static SerialPort Port = new SerialPort();
         static FlagCarrier _continue = new FlagCarrier();
         static BytesCarrier byteCarrier = new BytesCarrier();
-        static Logger RawLogger = new Logger("RawLogg");
+
+        static string portName = "nazwa";
+        static string portFilePath = Path.Combine(Directory.GetCurrentDirectory(), "/portName.txt");
 
 
         static string filepath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\";
-        static string portName = "nazwa";
+
         static int order = 0;                                                       // wybór w menu
 
         public static void Main()
@@ -68,7 +70,10 @@ namespace LaparoTalker
                 Thread PingerThread = new Thread(new ThreadStart(Pinger.Run));
                 PingerThread.Start();
 
-                Port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);         // zarejestrowanie obsługi zdarzenia, zdarzenie pojawia się gdy bufor osiągnie rozmiar określony w  Port.ReceivedBytesThreshold
+                PortReader PReader = new PortReader(Port, ref _continue, byteCarrier);        // wątek odbierający cyklicznie dane z portu
+                Thread PReaderThread = new Thread(new ThreadStart(PReader.Run));
+                PReaderThread.Start();
+               
 
                 Console.WriteLine("1.Wyslij CMP\n" + "2.Wyslij CMS\n" + "3. Zakoncz");              // Menu
                 while (_continue.bContinue)                                                         // do momentu wciśnięcia '3'
@@ -99,11 +104,10 @@ namespace LaparoTalker
                 }
 
                 PingerThread.Join();
+                PReaderThread.Join();
                 Thread.Sleep(1000);
                 ClosePort();
             }
-
-
         }
 
         public static void Init()
@@ -116,7 +120,6 @@ namespace LaparoTalker
             Port.Handshake = Handshake.None;
             Port.ReadTimeout = 500;
             Port.WriteTimeout = 500;
-            Port.ReceivedBytesThreshold = 200;               // WAŻNE: liczba bajtów w buforze odczytu, która uaktywnia zapis do pliku
         }
 
         public static int FindPortName()
@@ -139,6 +142,13 @@ namespace LaparoTalker
             else
                 return 0;
 
+            //portName = File.ReadAllLines(portFilePath)[0];
+
+            //if (portName.Contains("COM"))
+            //    return 0;
+            //else
+            //    return -1;
+
         }
 
         public static void OpenPort()
@@ -154,19 +164,6 @@ namespace LaparoTalker
         }
 
 
-
-        public static void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            int nbrDataRead = Port.Read(byteCarrier.bytes, 0, 200);
-            if (nbrDataRead == 0)                                                                       // jeśli nie odczytano danych, nie rób nic
-                return;
-            byteCarrier.ExtractData();
-            byteCarrier.flush();
-
-            string RawLog = System.Text.Encoding.UTF8.GetString(byteCarrier.bytes, 0, 200);           // konwersja bajtów na string
-            RawLogger.LogWrite(RawLog);                                                                  // Wysłanie danych do pliku
-
-        }
 
     }
 }
